@@ -3,7 +3,7 @@ import { useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
-export const Navbar = () => {
+export const Navbar = ({ isSticky = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -12,12 +12,20 @@ export const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // Base classes for the navbar container
+  const navbarClasses = `flex justify-between items-center px-3 sm:px-5 py-3 relative ${
+    isSticky
+      ? "bg-black/30 mt-5 rounded-full backdrop-blur-sm" // Solid background, no rounded corners when sticky
+      : "bg-[#FFFFFF0D] rounded-full" // Transparent background with rounded corners in hero
+  }`;
+
   return (
     <>
-      <div className="flex justify-between rounded-full items-center px-3 sm:px-5 py-3 bg-[#FFFFFF0D] relative">
+      <div className={navbarClasses}>
         <div className="w-24 sm:w-32">
           <img
-            src="/logo.png"
+            src={`${isSticky ? "/black-logo.png" : "/logo.png"}`}
+            // src="/logo.png"
             alt="BMA logo"
             className="w-full h-full object-contain"
             onError={(e) => {
@@ -124,7 +132,7 @@ export const Navbar = () => {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="fixed inset-x-0 top-[76px] bg-[#1E296B] rounded-lg shadow-lg z-50 py-4 md:hidden mx-4"
+            className={`fixed inset-x-0 top-[76px] bg-[#1E296B] rounded-lg shadow-lg z-50 py-4 md:hidden mx-4`}
             initial={{ opacity: 0, y: -20, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, y: -20, height: 0 }}

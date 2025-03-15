@@ -2,30 +2,48 @@ export const Footer = () => {
   return (
     <>
       <footer className="bg-[#1E296B] text-white pt-16 pb-6">
-        <div className="container mx-auto max-w-7xl px-6 md:px-10">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 pb-10">
+        <div className="container mx-auto max-w-[1440px] px-6 md:px-10">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10 pb-10">
             {/* Logo and Description */}
             <div className="md:col-span-1">
-              <img
-                src="/logo.png"
-                alt="BMA PureFix"
-                className="h mb-4 w-24 sm:w-35"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='180' height='36' viewBox='0 0 180 36'%3e%3crect width='120' height='36' fill='%23FFFFFF' fill-opacity='0.2'/%3e%3ctext x='10' y='22' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='white'%3eBMA%3c/text%3e%3ctext x='54' y='22' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='white'%3ePURE%3c/text%3e%3ctext x='100' y='22' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='red'%3eFIX%3c/text%3e%3c/svg%3e";
-                }}
-              />
-              <p className="text-sm text-gray-300 leading-relaxed">
+              <a href="/" className="inline-block">
+                <img
+                  src="/logo.png"
+                  alt="BMA PureFix"
+                  className="h-auto mb-4 w-32 sm:w-40"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src =
+                      "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='180' height='36' viewBox='0 0 180 36'%3e%3crect width='120' height='36' fill='%23FFFFFF' fill-opacity='0.2'/%3e%3ctext x='10' y='22' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='white'%3eBMA%3c/text%3e%3ctext x='54' y='22' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='white'%3ePURE%3c/text%3e%3ctext x='100' y='22' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='red'%3eFIX%3c/text%3e%3c/svg%3e";
+                  }}
+                />
+              </a>
+              <p className="text-sm text-gray-300 leading-relaxed mb-4">
                 Leading supplier of premium pop cement and screening paint for
                 the construction industry.
               </p>
+
+              {/* GIT Certification */}
+              <div className="mt-4">
+                <a href="#" className="inline-block">
+                  <img
+                    src="/son.png"
+                    alt="GIT Certification"
+                    className="h-16 w-auto"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src =
+                        "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3e%3ccircle cx='32' cy='32' r='30' fill='%23f0f0f0' stroke='%23ddd' stroke-width='2'/%3e%3ctext x='12' y='36' font-family='Arial, sans-serif' font-size='12' fill='%23666'%3eGIT%3c/text%3e%3c/svg%3e";
+                    }}
+                  />
+                </a>
+              </div>
             </div>
 
             {/* Pages Links */}
             <div className="md:col-span-1">
               <h3 className="text-lg font-semibold mb-4">Pages</h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 <li>
                   <a
                     href="/"
@@ -64,10 +82,18 @@ export const Footer = () => {
             {/* Products Links */}
             <div className="md:col-span-1">
               <h3 className="text-lg font-semibold mb-4">Products</h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 <li>
                   <a
-                    href="/products/pop-cement"
+                    href="/products"
+                    className="text-gray-300 hover:text-white transition-colors"
+                  >
+                    GYPSUM Plaster
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/products"
                     className="text-gray-300 hover:text-white transition-colors"
                   >
                     Pop Cement
@@ -75,7 +101,7 @@ export const Footer = () => {
                 </li>
                 <li>
                   <a
-                    href="/products/screening-paint"
+                    href="/products"
                     className="text-gray-300 hover:text-white transition-colors"
                   >
                     Screening Paint
@@ -83,7 +109,7 @@ export const Footer = () => {
                 </li>
                 <li>
                   <a
-                    href="/products/bond"
+                    href="/products"
                     className="text-gray-300 hover:text-white transition-colors"
                   >
                     Bond
@@ -102,10 +128,10 @@ export const Footer = () => {
                   href="https://instagram.com/bmapurefix"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors"
                 >
                   <svg
-                    className="w-6 h-6"
+                    className="w-5 h-5"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -116,10 +142,10 @@ export const Footer = () => {
                   href="https://facebook.com/bmapurefix"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors"
                 >
                   <svg
-                    className="w-6 h-6"
+                    className="w-5 h-5"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -130,10 +156,10 @@ export const Footer = () => {
                   href="https://youtube.com/bmapurefix"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors"
                 >
                   <svg
-                    className="w-6 h-6"
+                    className="w-5 h-5"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -146,18 +172,55 @@ export const Footer = () => {
               <div className="space-y-3 text-sm text-gray-300">
                 <div className="flex items-start">
                   <svg
-                    className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
+                    width="24"
+                    height="25"
+                    viewBox="0 0 24 25"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
+                    <g opacity="0.4">
+                      <path
+                        d="M12.8481 9.67104C12.2282 9.36227 11.6632 8.93245 11.0981 8.50264C9.92772 7.61226 8.7573 6.72188 7.09814 6.90759C5.57956 7.07757 3.7928 8.13321 2.56642 8.9843C1.60491 9.65158 1.09814 10.7717 1.09814 11.9421V20.6893C1.09814 21.5427 2.12604 22.0376 2.83441 21.5616C4.0439 20.7488 5.68683 19.8259 7.09814 19.6679C8.7573 19.4822 9.92772 20.3726 11.0981 21.263C12.2686 22.1534 13.439 23.0437 15.0981 22.858C16.6167 22.6881 18.4035 21.6324 19.6299 20.7813C20.5914 20.114 21.0981 18.9939 21.0981 17.8236V9.84868C21.0981 9.12731 20.3535 8.63305 19.6768 8.88309C18.978 9.14133 18.0893 9.44342 17.1696 9.6875V12.8828C17.1696 14.1254 16.2022 15.1328 15.0089 15.1328C13.8155 15.1328 12.8481 14.1254 12.8481 12.8828V9.67104Z"
+                        fill="white"
+                      />
+                    </g>
                     <path
-                      fillRule="evenodd"
-                      d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                      clipRule="evenodd"
+                      d="M14.25 1.92627C14.25 1.51206 14.5858 1.17627 15 1.17627H21C21.2599 1.17627 21.5013 1.31086 21.638 1.53197C21.7746 1.75308 21.7871 2.02919 21.6708 2.26168L20.8385 3.92627L21.6708 5.59086C21.7871 5.82335 21.7746 6.09946 21.638 6.32057C21.5013 6.54168 21.2599 6.67627 21 6.67627H15.75V13.1615C15.75 13.5757 15.4142 13.9115 15 13.9115C14.5858 13.9115 14.25 13.5757 14.25 13.1615V1.92627Z"
+                      fill="white"
                     />
                   </svg>
-                  <span>
-                    No 2, Amuda Ojere, Iwo Road, Ibadan, Oyo State, Nigeria.
+
+                  <span className="ml-2">
+                    No 2, Amuda Ojere, Iwo Road,
+                    <br />
+                    Ibadan, Oyo State, Nigeria.
+                  </span>
+                </div>
+
+                <div className="flex items-start">
+                  <svg
+                    width="24"
+                    height="25"
+                    viewBox="0 0 24 25"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g opacity="0.4">
+                      <path
+                        d="M12.8481 9.67104C12.2282 9.36227 11.6632 8.93245 11.0981 8.50264C9.92772 7.61226 8.7573 6.72188 7.09814 6.90759C5.57956 7.07757 3.7928 8.13321 2.56642 8.9843C1.60491 9.65158 1.09814 10.7717 1.09814 11.9421V20.6893C1.09814 21.5427 2.12604 22.0376 2.83441 21.5616C4.0439 20.7488 5.68683 19.8259 7.09814 19.6679C8.7573 19.4822 9.92772 20.3726 11.0981 21.263C12.2686 22.1534 13.439 23.0437 15.0981 22.858C16.6167 22.6881 18.4035 21.6324 19.6299 20.7813C20.5914 20.114 21.0981 18.9939 21.0981 17.8236V9.84868C21.0981 9.12731 20.3535 8.63305 19.6768 8.88309C18.978 9.14133 18.0893 9.44342 17.1696 9.6875V12.8828C17.1696 14.1254 16.2022 15.1328 15.0089 15.1328C13.8155 15.1328 12.8481 14.1254 12.8481 12.8828V9.67104Z"
+                        fill="white"
+                      />
+                    </g>
+                    <path
+                      d="M14.25 1.92627C14.25 1.51206 14.5858 1.17627 15 1.17627H21C21.2599 1.17627 21.5013 1.31086 21.638 1.53197C21.7746 1.75308 21.7871 2.02919 21.6708 2.26168L20.8385 3.92627L21.6708 5.59086C21.7871 5.82335 21.7746 6.09946 21.638 6.32057C21.5013 6.54168 21.2599 6.67627 21 6.67627H15.75V13.1615C15.75 13.5757 15.4142 13.9115 15 13.9115C14.5858 13.9115 14.25 13.5757 14.25 13.1615V1.92627Z"
+                      fill="white"
+                    />
+                  </svg>
+
+                  <span className="ml-2">
+                    Office 2411, SIT Tower
+                    <br />
+                    Dubai Silicon Oasis, United Arab Emirates
                   </span>
                 </div>
 

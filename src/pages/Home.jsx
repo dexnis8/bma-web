@@ -1,17 +1,28 @@
 import { Navbar } from "../components/Navbar";
 // eslint-disable-next-line no-unused-vars
-import { motion, useAnimation } from "framer-motion";
+import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { Footer } from "../components/Footer";
 import { CTAsec } from "../components/CTAsec";
 import { FAQ } from "../components/FAQ";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ScrollToTop } from "../components/ScrollToTop";
 
 export const Home = () => {
   // Animation controls
   const heroControls = useAnimation();
+  const videoRef = useRef(null);
+  const [videoError, setVideoError] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [showMuteIndicator, setShowMuteIndicator] = useState(false);
+  // State to track if navbar should be sticky
+  const [isNavbarSticky, setIsNavbarSticky] = useState(false);
+  // Reference to hero section for intersection observer
+  const heroSectionRef = useRef(null);
 
-  // Scroll to top on page load
+  // Reference to product section for smooth scrolling
+  const productSectionRef = useRef(null);
+
+  // Scroll to top on page load and handle video playback
   useEffect(() => {
     window.scrollTo(0, 0);
 
@@ -21,131 +32,391 @@ export const Home = () => {
       y: 0,
       transition: { duration: 0.8, ease: "easeOut" },
     });
+
+    // Function to play video with error handling
+    const playVideo = () => {
+      if (videoRef.current) {
+        // Make sure video is muted to allow autoplay in most browsers
+        videoRef.current.muted = true;
+
+        const playPromise = videoRef.current.play();
+
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log("Video playback started successfully");
+            })
+            .catch((error) => {
+              console.error("Video playback failed:", error);
+              setVideoError(true);
+            });
+        }
+      }
+    };
+
+    // Try to play video after a short delay to ensure DOM is fully loaded
+    const timer = setTimeout(() => {
+      playVideo();
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
+    };
   }, [heroControls]);
+
+  // Set up intersection observer to detect when hero section is out of viewport
+  useEffect(() => {
+    const options = {
+      root: null, // viewport
+      rootMargin: "0px",
+      threshold: 0.1, // trigger when 10% of the hero is visible
+    };
+
+    const handleIntersection = (entries) => {
+      // When hero section is not intersecting (out of view), make navbar sticky
+      const [entry] = entries;
+      setIsNavbarSticky(!entry.isIntersecting);
+    };
+
+    const observer = new IntersectionObserver(handleIntersection, options);
+
+    if (heroSectionRef.current) {
+      observer.observe(heroSectionRef.current);
+    }
+
+    return () => {
+      if (heroSectionRef.current) {
+        observer.unobserve(heroSectionRef.current);
+      }
+    };
+  }, []);
+
+  // Handle video error
+  const handleVideoError = () => {
+    console.log("Video failed to load, using fallback image");
+    setVideoError(true);
+  };
+
+  // Smooth scroll to product section
+  const scrollToProductSection = () => {
+    productSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  // Toggle video mute status
+  const toggleMute = (e) => {
+    // Prevent default behavior
+    e.preventDefault();
+
+    // Avoid toggle when clicking on navigation, buttons, or scroll indicator
+    if (
+      e.target.closest("button") ||
+      e.target.closest("a") ||
+      e.target.closest('[role="button"]')
+    ) {
+      return;
+    }
+
+    if (videoRef.current) {
+      const newMuteState = !isMuted;
+      videoRef.current.muted = newMuteState;
+      setIsMuted(newMuteState);
+
+      // Show mute indicator for a short time
+      setShowMuteIndicator(true);
+      setTimeout(() => {
+        setShowMuteIndicator(false);
+      }, 1500);
+    }
+  };
 
   return (
     <>
       <ScrollToTop />
-      {/* Hero Section */}
-      <section className="bg-[#1E296B] pb-10 md:pb-20 px-4 sm:px-6 md:px-10">
+
+      {/* Sticky Navbar - Only visible when scrolled past hero section */}
+      <AnimatePresence>
+        {isNavbarSticky && (
+          <motion.div
+            className="fixed top-0 left-0 right-0 z-50  md:mx-20 "
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="px-4 sm:px-6 md:px-10">
+              <Navbar isSticky={true} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Hero Section with Video Background */}
+      <section
+        ref={heroSectionRef}
+        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+        onClick={toggleMute}
+      >
+        {/* Video Background */}
+        <div className="absolute inset-0 w-full h-full">
+          {!videoError ? (
+            <video
+              ref={videoRef}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+              poster="/img.png" // Fallback image while video loads
+              onError={handleVideoError}
+            >
+              <source src="/hero-video.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <img
+              src="/img.png"
+              alt="BMA PureFix Hero"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          )}
+          {/* Overlay gradient to ensure text readability */}
+          <div className="absolute inset-0 bg-black/70 bg-opacity-60"></div>
+        </div>
+
+        {/* Mute/Unmute Indicator */}
+        {showMuteIndicator && !videoError && (
+          <motion.div
+            className="absolute z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-sm p-6 rounded-full"
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.5, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {isMuted ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                  clipRule="evenodd"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                />
+              </svg>
+            )}
+          </motion.div>
+        )}
+
+        {/* Small Mute Indicator (always visible) */}
+        {!videoError && (
+          <motion.div
+            className="absolute z-20 bottom-5 right-5 bg-black/30 backdrop-blur-sm p-2 rounded-full hover:bg-black/50 transition-colors"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.7 }}
+            whileHover={{ opacity: 1 }}
+            title={isMuted ? "Unmute video" : "Mute video"}
+          >
+            {isMuted ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                  clipRule="evenodd"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                />
+              </svg>
+            )}
+          </motion.div>
+        )}
+
+        {/* Navbar in Hero Section */}
         <motion.div
-          className="overflow-hidden rounded-lg"
+          className="absolute top-0 left-0 right-0 z-10 px-4 sm:px-6 md:px-10"
           initial={{ opacity: 0, y: -30 }}
           animate={heroControls}
           transition={{ duration: 0.8, delay: 0.5 }}
         >
-          <div className="px-3 sm:px-5 md:px-[90px] py-4 md:py-[31px]">
-            <Navbar />
+          <div className="container mx-auto max-w-[1440px] px-3 sm:px-5 md:px-[90px] py-4 md:py-[31px]">
+            <Navbar isSticky={false} />
           </div>
         </motion.div>
-        <motion.h1
-          className="text-white px-2 sm:px-[9px] text-center text-3xl md:text-5xl lg:text-7xl hero font-bold mt-8 md:mt-10"
-          initial={{ opacity: 0, y: -20 }}
-          animate={heroControls}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          Build Stronger, Build Smarter with BMA PureFix.
-        </motion.h1>
-        {/* Hero button Old */}
-        {/* <motion.div
-          className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 md:gap-10 mt-8 md:mt-10 text-white text-base md:text-lg font-medium"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <motion.button
-            className="flex items-center gap-2 bg-[#243280] rounded-full px-6 py-3 w-full sm:w-auto justify-center cursor-pointer hover:bg-[#243280]/50 transition-all duration-300"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+
+        {/* Hero Content */}
+        <div className="container mx-auto px-4 z-10 text-center mt-16">
+          <motion.h1
+            className="text-white md:w-[85%] mx-auto px-2 sm:px-[9px] text-center text-3xl md:text-5xl lg:text-7xl hero font-bold mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={heroControls}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <motion.img
-              src="/delivery.svg"
-              alt="Fast Delivery"
-              className="h-5 w-5 object-contain"
-              // initial={{ rotate: 0 }}
-              // animate={{ rotate: 360 }}
-            />
-            <p>Fast Delivery</p>
-          </motion.button>
-          <motion.button
-            className="flex items-center gap-2 bg-[#243280] rounded-full px-6 py-3 w-full sm:w-auto justify-center cursor-pointer hover:bg-[#243280]/50 transition-all duration-300"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            Build Stronger, Build Smarter with BMA PureFix.
+          </motion.h1>
+
+          {/* Action Buttons */}
+          <motion.div
+            className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 md:gap-10 mt-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={heroControls}
+            transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+          >
+            <motion.div
+              className="flex items-center bg-[#0A337F] rounded-full px-6 py-3 cursor-pointer"
+              whileHover={{ scale: 1.05, backgroundColor: "#0D47A1" }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <img
+                src="/delivery.svg"
+                alt="Fast Delivery"
+                className="w-6 h-6 mr-3"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3e%3cpath fill='%23FFFFFF' d='M19 7c0-1.1-.9-2-2-2h-3v2h3v2.65L13.52 14H10V9H6c-2.21 0-4 1.79-4 4v3h2c0 1.66 1.34 3 3 3s3-1.34 3-3h4.48L19 10.35V7zM7 17c-.55 0-1-.45-1-1h2c0 .55-.45 1-1 1z'/%3e%3cpath fill='%23FFFFFF' d='M5 6h5v2H5zm14 7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zm0 4c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z'/%3e%3c/svg%3e";
+                }}
+              />
+              <span className="text-white font-medium">Fast Delivery</span>
+            </motion.div>
+
+            <motion.div
+              className="flex items-center bg-[#0A337F] rounded-full px-6 py-3 cursor-pointer"
+              whileHover={{ scale: 1.05, backgroundColor: "#0D47A1" }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <img
+                src="/call-love.svg"
+                alt="24/7 Support"
+                className="w-6 h-6 mr-3"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3e%3cpath fill='%23FFFFFF' d='M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z'/%3e%3c/svg%3e";
+                }}
+              />
+              <span className="text-white font-medium">24/7 Support</span>
+            </motion.div>
+          </motion.div>
+
+          {/* Scroll Indicator */}
+          <motion.div
+            className="absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
+            transition={{ duration: 0.5, delay: 1.2 }}
+            whileHover="hover"
+            onClick={scrollToProductSection}
+            aria-label="Scroll to next section"
+            role="button"
+            tabIndex={0}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                scrollToProductSection();
+              }
+            }}
           >
-            <motion.img
-              src="/call-love.svg"
-              alt="24/7 Support"
-              className="h-5 w-5 object-contain"
-              // initial={{ rotate: 0 }}
-              // animate={{ rotate: 360 }}
-              // transition={{
-              //   duration: 2,
-              //   repeat: Infinity,
-              //   ease: "linear",
-              //   repeatDelay: 5,
-              // }}
-            />
-            <p>24/7 Support</p>
-          </motion.button>
-        </motion.div> */}
-        {/* New Hero button  */}
-        <motion.div
-          className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 md:gap-10 mt-8 md:mt-10 text-white text-base md:text-lg font-medium"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-          viewport={{ once: true }}
-        >
-          <motion.div
-            className="flex items-center bg-[#0A337F] rounded-full px-6 py-3 cursor-pointer"
-            whileHover={{ scale: 1.05, backgroundColor: "#0D47A1" }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          >
-            <img
-              src="/delivery.svg"
-              alt="Fast Delivery"
-              className="w-6 h-6 mr-3"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src =
-                  "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3e%3cpath fill='%23FFFFFF' d='M19 7c0-1.1-.9-2-2-2h-3v2h3v2.65L13.52 14H10V9H6c-2.21 0-4 1.79-4 4v3h2c0 1.66 1.34 3 3 3s3-1.34 3-3h4.48L19 10.35V7zM7 17c-.55 0-1-.45-1-1h2c0 .55-.45 1-1 1z'/%3e%3cpath fill='%23FFFFFF' d='M5 6h5v2H5zm14 7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zm0 4c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z'/%3e%3c/svg%3e";
-              }}
-            />
-            <span className="text-white font-medium">Fast Delivery</span>
+            <div className="flex flex-col items-center">
+              <motion.div
+                className="relative w-8 h-14 rounded-full border border-white mb-2 flex items-start justify-center"
+                variants={{
+                  hover: {
+                    borderColor: "rgba(255, 255, 255, 1)",
+                    boxShadow: "0 0 8px rgba(255, 255, 255, 0.5)",
+                  },
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.div
+                  className="w-1.5 h-1.5 bg-white rounded-full absolute top-2"
+                  initial={{ y: 0 }}
+                  animate={{ y: [0, 10, 0] }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    repeatType: "loop",
+                    ease: "easeInOut",
+                  }}
+                  variants={{
+                    hover: {
+                      backgroundColor: "rgba(255, 255, 255, 1)",
+                      scale: 1.2,
+                      boxShadow: "0 0 5px rgba(255, 255, 255, 0.8)",
+                    },
+                  }}
+                />
+              </motion.div>
+              <span className="text-white text-sm font-light">Scroll</span>
+            </div>
           </motion.div>
-
-          <motion.div
-            className="flex items-center bg-[#0A337F] rounded-full px-6 py-3 cursor-pointer"
-            whileHover={{ scale: 1.05, backgroundColor: "#0D47A1" }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          >
-            <img
-              src="/call-love.svg"
-              alt="24/7 Support"
-              className="w-6 h-6 mr-3"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src =
-                  "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3e%3cpath fill='%23FFFFFF' d='M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z'/%3e%3c/svg%3e";
-              }}
-            />
-            <span className="text-white font-medium">24/7 Support</span>
-          </motion.div>
-        </motion.div>
-
-        <div className="flex justify-center items-center mt-10 md:mt-20 h-[300px] sm:h-[400px] md:h-[600px] w-full bg-black rounded-lg">
-          Video
         </div>
       </section>
 
       {/* Product Information Section */}
-      <section className="py-10 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
-        <div className="container mx-auto max-w-7xl">
+      <section
+        ref={productSectionRef}
+        className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-white"
+      >
+        <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
             <motion.div
               className="w-full md:flex-1 space-y-4 sm:space-y-6 mb-8 md:mb-0"
@@ -231,7 +502,7 @@ export const Home = () => {
 
       {/* Global Partner Section */}
       <section className="py-10 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 lg:px-20 bg-gray-50">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col md:flex-row items-start gap-6 md:gap-10 mb-8 md:mb-0">
             {/* Left Column - Heading */}
             <motion.div
@@ -449,7 +720,7 @@ export const Home = () => {
 
       {/* Bridging Global Quality Section */}
       <section className="py-10 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col md:flex-row items-start gap-8 md:gap-12">
             {/* Left Column - Heading and Features */}
             <motion.div
@@ -595,7 +866,7 @@ export const Home = () => {
 
       {/* On-Time Delivery Section */}
       <section className="bg-[#001756] py-10 sm:py-16 md:py-20 px-4 sm:px-6 md:px-10">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
+        <div className="container mx-auto max-w-[1440px] px-4 sm:px-6 md:px-10">
           <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
             {/* Left Column - Image */}
             <motion.div
@@ -673,8 +944,11 @@ export const Home = () => {
       </section>
 
       {/* Product Showcase Section */}
-      <section className="py-20 px-6 md:px-20 bg-white">
-        <div className="container mx-auto max-w-7xl">
+      <section
+        id="products"
+        className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-gray-50"
+      >
+        <div className="container mx-auto max-w-[1440px]">
           {/* Heading Area */}
           <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-16">
             {/* Left - Main Heading */}
@@ -713,8 +987,50 @@ export const Home = () => {
           </div>
 
           {/* Product Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
             {/* Product Card 1 - POP Cement */}
+            <motion.div
+              className="bg-white shadow-lg rounded-lg overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -10, transition: { duration: 0.3 } }}
+            >
+              <div className="p-6">
+                <div className="h-64 flex items-center justify-center bg-[#EDEDED] rounded-lg mb-6">
+                  <motion.img
+                    src="/pop.png"
+                    alt="POP Cement Bag"
+                    className="max-h-full max-w-full w-full object-contain"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                    viewport={{ once: true }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src =
+                        "https://via.placeholder.com/300x350/f0f0f0/1E296B?text=POP+Cement";
+                    }}
+                  />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                  GYPSUM Plaster
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  BMA PureFix (Plaster of Paris)
+                </p>
+                <motion.button
+                  className="bg-[#001756] text-white px-5 py-2 rounded-full font-medium hover:bg-[#1E296B] transition-colors inline-block"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  See details
+                </motion.button>
+              </div>
+            </motion.div>
+
+            {/* Product Card 2 - POP Cement */}
             <motion.div
               className="bg-white shadow-lg rounded-lg overflow-hidden"
               initial={{ opacity: 0, y: 30 }}
@@ -756,7 +1072,7 @@ export const Home = () => {
               </div>
             </motion.div>
 
-            {/* Product Card 2 - Bond */}
+            {/* Product Card 3 - Bond */}
             <motion.div
               className="bg-white shadow-lg rounded-lg overflow-hidden"
               initial={{ opacity: 0, y: 30 }}
@@ -794,7 +1110,7 @@ export const Home = () => {
               </div>
             </motion.div>
 
-            {/* Product Card 3 - Screeding Paint */}
+            {/* Product Card 4 - Screeding Paint */}
             <motion.div
               className="bg-white shadow-lg rounded-lg overflow-hidden"
               initial={{ opacity: 0, y: 30 }}
@@ -838,8 +1154,8 @@ export const Home = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 px-6 md:px-10 bg-gray-50">
-        <div className="container mx-auto max-w-7xl">
+      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
+        <div className="container mx-auto max-w-[1440px]">
           {/* Section Heading */}
           <motion.div
             className="text-center mb-16"
@@ -1056,191 +1372,6 @@ export const Home = () => {
               </div>
             </motion.div>
           </div>
-        </div>
-      </section>
-
-      {/* Membership & Certification Section */}
-      <section className="py-16 px-6 md:px-20 bg-white">
-        <div className="container sm:px-20 mx-auto max-w-7xl">
-          {/* Section Heading */}
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            viewport={{ once: true }}
-          >
-            <motion.h2
-              className="bma-heading-2 text-gray-900"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              Membership & Certification
-            </motion.h2>
-          </motion.div>
-
-          {/* Logo Grid - First Row */}
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 md:px-10 gap-10 md:gap-16 items-center justify-items-center mb-12"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-          >
-            {/* Notion Logo */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-            >
-              <img
-                src="/notion.png"
-                alt="Notion"
-                className="h-10 md:h-15"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='120' height='30' viewBox='0 0 120 30'%3e%3ctext x='5' y='20' font-family='Arial, sans-serif' font-size='16' font-weight='bold'%3eNotion%3c/text%3e%3c/svg%3e";
-                }}
-              />
-            </motion.div>
-
-            {/* Google Logo */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-            >
-              <img
-                src="/google.png"
-                alt="Google"
-                className="h-10 md:h-15"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='120' height='30' viewBox='0 0 120 30'%3e%3ctext x='5' y='20' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='%234285F4'%3eG%3c/text%3e%3ctext x='20' y='20' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='%23EA4335'%3eo%3c/text%3e%3ctext x='35' y='20' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='%23FBBC05'%3eo%3c/text%3e%3ctext x='50' y='20' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='%234285F4'%3eg%3c/text%3e%3ctext x='65' y='20' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='%2334A853'%3el%3c/text%3e%3ctext x='75' y='20' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='%23EA4335'%3ee%3c/text%3e%3c/svg%3e";
-                }}
-              />
-            </motion.div>
-
-            {/* Microsoft Logo */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-            >
-              <img
-                src="/microsoft.png"
-                alt="Microsoft"
-                className="h-10 md:h-15"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='120' height='30' viewBox='0 0 120 30'%3e%3crect x='5' y='5' width='9' height='9' fill='%23F25022'/%3e%3crect x='16' y='5' width='9' height='9' fill='%237FBA00'/%3e%3crect x='5' y='16' width='9' height='9' fill='%2300A4EF'/%3e%3crect x='16' y='16' width='9' height='9' fill='%23FFB900'/%3e%3ctext x='30' y='20' font-family='Arial, sans-serif' font-size='12' font-weight='bold'%3eMicrosoft%3c/text%3e%3c/svg%3e";
-                }}
-              />
-            </motion.div>
-
-            {/* Grammarly Logo */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-            >
-              <img
-                src="/grammarly.png"
-                alt="Grammarly"
-                className="h-10 md:h-15"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='120' height='30' viewBox='0 0 120 30'%3e%3ccircle cx='15' cy='15' r='10' fill='%2315C39A'/%3e%3ctext x='30' y='20' font-family='Arial, sans-serif' font-size='12' font-weight='bold'%3eGrammarly%3c/text%3e%3c/svg%3e";
-                }}
-              />
-            </motion.div>
-          </motion.div>
-
-          {/* Logo Grid - Second Row */}
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 md:px-30 gap-10 md:gap-16 items-center justify-items-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            {/* Descript Logo */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-            >
-              <img
-                src="/descript.png"
-                alt="Descript"
-                className="h-8 md:h-15"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='120' height='30' viewBox='0 0 120 30'%3e%3ccircle cx='15' cy='15' r='10' fill='%234666F7'/%3e%3ctext x='30' y='20' font-family='Arial, sans-serif' font-size='12' font-weight='bold' fill='%234666F7'%3edescript%3c/text%3e%3c/svg%3e";
-                }}
-              />
-            </motion.div>
-
-            {/* Airbnb Logo */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.7 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-            >
-              <img
-                src="/airbnb.png"
-                alt="Airbnb"
-                className="h-8 md:h-15"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='120' height='30' viewBox='0 0 120 30'%3e%3cpath d='M15,15 C15,13.5 14,12.5 12.5,12.5 C11,12.5 10,13.5 10,15 C10,16.5 11,17.5 12.5,17.5 C14,17.5 15,16.5 15,15 Z' fill='%23FF5A5F'/%3e%3cpath d='M20,19 C20,13 15,10 12.5,6 C10,10 5,13 5,19 C5,23 8,25 12.5,25 C17,25 20,23 20,19 Z' fill='%23FF5A5F' fill-rule='evenodd'/%3e%3ctext x='30' y='20' font-family='Arial, sans-serif' font-size='12' font-weight='bold' fill='%23FF5A5F'%3eairbnb%3c/text%3e%3c/svg%3e";
-                }}
-              />
-            </motion.div>
-
-            {/* Groupon Logo */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.8 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-            >
-              <img
-                src="/groupon.png"
-                alt="Groupon"
-                className="h-8 md:h-15"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='120' height='30' viewBox='0 0 120 30'%3e%3ctext x='10' y='20' font-family='Arial, sans-serif' font-size='14' font-weight='bold' fill='%23333333'%3eGROUPON%3c/text%3e%3c/svg%3e";
-                }}
-              />
-            </motion.div>
-          </motion.div>
-          {/* <div className="flex justify-center items-center">
-            <img src="/mem.png" alt="" />
-          </div> */}
         </div>
       </section>
 

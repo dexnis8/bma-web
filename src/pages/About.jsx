@@ -1,12 +1,21 @@
 // eslint-disable-next-line no-unused-vars
-import { motion, useAnimation } from "framer-motion";
+import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CTAsec } from "../components/CTAsec";
 import { ScrollToTop } from "../components/ScrollToTop";
+
 export const About = () => {
   const heroControls = useAnimation();
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioError, setAudioError] = useState(false);
+
+  // State to track if navbar should be sticky
+  const [isNavbarSticky, setIsNavbarSticky] = useState(false);
+  // Reference to hero section for intersection observer
+  const heroSectionRef = useRef(null);
 
   useEffect(() => {
     // Scroll to top on page load
@@ -18,76 +27,217 @@ export const About = () => {
       y: 0,
       transition: { duration: 0.8, ease: "easeOut" },
     });
+
+    // Autoplay audio with user interaction check
+    const playAudio = () => {
+      if (audioRef.current) {
+        const playPromise = audioRef.current.play();
+
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              setIsPlaying(true);
+            })
+            .catch((error) => {
+              console.error("Audio playback failed:", error);
+              setAudioError(true);
+            });
+        }
+      }
+    };
+
+    // Try to play audio after a short delay to allow page to load
+    const timer = setTimeout(() => {
+      playAudio();
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+      // Pause audio when component unmounts
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
   }, [heroControls]);
+
+  // Set up intersection observer to detect when hero section is out of viewport
+  useEffect(() => {
+    const options = {
+      root: null, // viewport
+      rootMargin: "0px",
+      threshold: 0.1, // trigger when 10% of the hero is visible
+    };
+
+    const handleIntersection = (entries) => {
+      // When hero section is not intersecting (out of view), make navbar sticky
+      const [entry] = entries;
+      setIsNavbarSticky(!entry.isIntersecting);
+    };
+
+    const observer = new IntersectionObserver(handleIntersection, options);
+
+    if (heroSectionRef.current) {
+      observer.observe(heroSectionRef.current);
+    }
+
+    return () => {
+      if (heroSectionRef.current) {
+        observer.unobserve(heroSectionRef.current);
+      }
+    };
+  }, []);
+
+  const toggleAudio = () => {
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play();
+        setIsPlaying(true);
+      } else {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      }
+    }
+  };
 
   return (
     <>
       <ScrollToTop />
-      {/* Hero Section */}
-      <section className="bg-[#1E296B] pb-16 md:pb-24 px-4 sm:px-6 md:px-10">
+
+      {/* Sticky Navbar - Only visible when scrolled past hero section */}
+      <AnimatePresence>
+        {isNavbarSticky && (
+          <motion.div
+            className="fixed top-0 left-0 right-0 z-50 md:mx-20"
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="px-4 sm:px-6 md:px-10">
+              <Navbar isSticky={true} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Hero Section with Background Image */}
+      <section
+        ref={heroSectionRef}
+        className="relative h-[60vh] md:h-[80vh] flex flex-col items-center justify-center overflow-hidden"
+      >
+        {/* Background Image */}
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src="/bg-ab.png"
+            alt="BMA PureFix Factory"
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/ab4.png"; // Fallback image if the main one fails to load
+            }}
+          />
+          {/* Overlay gradient to ensure text readability */}
+          {/* <div className="absolute inset-0 bg-black/30"></div> */}
+        </div>
+
+        {/* Audio Element */}
+        <audio
+          ref={audioRef}
+          src="/about-voiceover.mp3"
+          preload="auto"
+          onError={() => setAudioError(true)}
+        />
+
+        {/* Navbar */}
         <motion.div
-          className="overflow-hidden rounded-lg"
+          className="absolute top-0 left-0 right-0 z-10 px-4 sm:px-6 md:px-10"
           initial={{ opacity: 0, y: -30 }}
           animate={heroControls}
           transition={{ duration: 0.8, delay: 0.5 }}
         >
-          <div className="px-3 sm:px-5 md:px-[90px] py-4 md:py-[31px]">
-            <Navbar />
+          <div className="container mx-auto max-w-[1440px] px-3 sm:px-5 md:px-[90px] py-4 md:py-[31px]">
+            <Navbar isSticky={false} />
           </div>
         </motion.div>
 
-        <div className="container mx-auto max-w-7xl mt-16 md:mt-10">
-          <div className="flex flex-col items-center justify-center text-center">
-            <motion.h1
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl hero font-bold text-white mb-8"
-              initial={{ opacity: 0, y: 30 }}
-              animate={heroControls}
-            >
-              About BMA PureFix
-            </motion.h1>
-          </div>
-        </div>
-
-        <div className="flex justify-center items-center mt-10 md:mt-20 h-[300px] sm:h-[400px] md:h-[600px] w-full rounded-lg overflow-hidden">
+        {/* Audio Controls */}
+        {!audioError && (
           <motion.div
-            className="w-full md:flex-1 relative"
-            initial={{ opacity: 0, scale: 0.9, y: 30 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{
-              duration: 1,
-              delay: 0.4,
-              ease: "easeOut",
-            }}
-            viewport={{ once: true }}
-            whileHover={{
-              scale: 1.03,
-              transition: { duration: 0.3 },
-            }}
+            className="absolute top-5 right-5 z-20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
           >
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-t from-[#1E296B]/50 to-transparent rounded-lg"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              viewport={{ once: true }}
-            />
-            <img
-              src="/about.png"
-              alt="BMA PureFix Product Display"
-              className="w-full h-full object-cover rounded-lg shadow-xl"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src =
-                  "https://via.placeholder.com/600x400/1E296B/FFFFFF?text=BMA+PureFix";
-              }}
-            />
+            <button
+              onClick={toggleAudio}
+              className="bg-white/20 backdrop-blur-sm p-2 rounded-full hover:bg-white/30 transition-colors"
+              aria-label={isPlaying ? "Pause voice over" : "Play voice over"}
+            >
+              {isPlaying ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              )}
+            </button>
           </motion.div>
+        )}
+
+        {/* Hero Content */}
+        <div className="container relative z-10 mx-auto max-w-[1440px] px-4 text-center">
+          <motion.h1
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={heroControls}
+          >
+            About BMA PureFix
+          </motion.h1>
+
+          {/* <motion.p
+            className="text-white/90 text-lg md:text-xl max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={heroControls}
+            transition={{ delay: 0.2 }}
+          >
+            Excellence in construction materials, innovation in every grain.
+          </motion.p> */}
         </div>
       </section>
 
       {/* Innovation in Construction Section */}
       <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
             {/* Left Column - Text Content */}
             <motion.div
@@ -150,7 +300,7 @@ export const About = () => {
                 transition={{ duration: 0.3 }}
               >
                 <img
-                  src="/ab1.png"
+                  src="/n1.png"
                   alt="BMA PureFix Innovation"
                   className="w-full h-auto object-cover rounded-lg"
                   onError={(e) => {
@@ -167,7 +317,7 @@ export const About = () => {
 
       {/* Our Journey Section */}
       <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-gray-50">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
             {/* Left Column - Image */}
             <motion.div
@@ -183,7 +333,7 @@ export const About = () => {
                 transition={{ duration: 0.3 }}
               >
                 <img
-                  src="/ab2.png"
+                  src="/n2.png"
                   alt="BMA PureFix Team Members"
                   className="w-full h-auto object-cover rounded-lg"
                   onError={(e) => {
@@ -247,7 +397,7 @@ export const About = () => {
 
       {/* Our Commitment to Excellence Section */}
       <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
             {/* Left Column - Text Content */}
             <motion.div
@@ -326,7 +476,7 @@ export const About = () => {
 
       {/* What Drives Us Section */}
       <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-[#002171]">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-[1440px]">
           {/* Heading and Intro Text */}
           <motion.div
             className="text-center mb-12 md:mb-16"
@@ -506,7 +656,7 @@ export const About = () => {
 
       {/* Vision and Mission Section */}
       <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-black">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col space-y-8">
             {/* Vision Card */}
             <motion.div
@@ -600,7 +750,7 @@ export const About = () => {
 
       {/* Industry Leadership and Certification Section */}
       <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-[1440px]">
           <motion.div
             className="text-center mb-10"
             initial={{ opacity: 0, y: 20 }}
@@ -650,7 +800,7 @@ export const About = () => {
 
       {/* Building the Future Section */}
       <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-gray-50">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
             {/* Left Column - Text Content */}
             <motion.div
@@ -719,10 +869,116 @@ export const About = () => {
         </div>
       </section>
 
-      {/* Meet Our Team Section */}
+      {/* Meet Our CEO Section */}
       <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
-        <div className="container mx-auto max-w-7xl">
-          {/* Section Heading and Description */}
+        <div className="container mx-auto max-w-[1440px]">
+          <motion.div
+            className="mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true }}
+          >
+            <motion.h2
+              className="text-3xl sm:text-4xl font-bold text-[#1D1E25] leading-tight mb-2"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              Meet Our CEO:
+            </motion.h2>
+            <motion.p
+              className="text-gray-600 text-lg"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              Engineering Strength, Cementing Success, Building Futures
+            </motion.p>
+          </motion.div>
+
+          <div className="flex flex-col md:flex-row gap-8 md:gap-16">
+            {/* CEO Image */}
+            <motion.div
+              className="w-full md:w-2/5"
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <img
+                src="/ceo.png"
+                alt="Bello Michael - CEO of BMA PureFix"
+                className="w-full h-auto rounded-lg"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "https://via.placeholder.com/500x600/f5f5f5/333333?text=CEO+Portrait";
+                }}
+              />
+            </motion.div>
+
+            {/* CEO Info */}
+            <motion.div
+              className="w-full md:w-3/5"
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <motion.h3
+                className="text-2xl font-bold text-[#1D1E25] mb-1"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true }}
+              >
+                Bello Michael
+              </motion.h3>
+              <motion.p
+                className="text-gray-600 mb-6"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                MD, CEO
+              </motion.p>
+              <motion.p
+                className="text-gray-600 mb-6 leading-relaxed"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                viewport={{ once: true }}
+              >
+                With over 20 years of experience in the construction materials
+                industry, Bello Michael leads our company with a vision for
+                innovation and excellence. His strategic leadership has been
+                instrumental in establishing BMA PureFix as a market leader.
+              </motion.p>
+            </motion.div>
+          </div>
+
+          <motion.p
+            className="text-gray-600 mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.6 }}
+            viewport={{ once: true }}
+          >
+            Together, our team is committed to pushing the boundaries of
+            innovation and quality, ensuring that every product we deliver meets
+            the highest standards of performance and reliability.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* Meet Our Team Section */}
+      {/* <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
+        <div className="container mx-auto max-w-[1440px]">
+        
           <motion.div
             className="mb-12 md:mb-16"
             initial={{ opacity: 0, y: 20 }}
@@ -746,9 +1002,9 @@ export const About = () => {
             </p>
           </motion.div>
 
-          {/* Team Members Grid */}
+        
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {/* Team Member 1 */}
+            
             <motion.div
               className="bg-white rounded-lg overflow-hidden"
               initial={{ opacity: 0, y: 30 }}
@@ -774,13 +1030,13 @@ export const About = () => {
               <p className="text-gray-500 mb-3">Founder, CTO</p>
               <p className="text-gray-600 text-sm leading-relaxed">
                 With over 20 years of experience in the construction materials
-                industry, John leads our company with a vision for innovation
-                and excellence. His strategic leadership has been instrumental
-                in establishing BMA PureFix as a market leader.
+                industry, Bello Michael leads our company with a vision for
+                innovation and excellence. His strategic leadership has been
+                instrumental in establishing BMA PureFix as a market leader.
               </p>
             </motion.div>
 
-            {/* Team Member 2 */}
+           
             <motion.div
               className="bg-white rounded-lg overflow-hidden"
               initial={{ opacity: 0, y: 30 }}
@@ -812,7 +1068,7 @@ export const About = () => {
               </p>
             </motion.div>
 
-            {/* Team Member 3 */}
+           
             <motion.div
               className="bg-white rounded-lg overflow-hidden"
               initial={{ opacity: 0, y: 30 }}
@@ -845,7 +1101,7 @@ export const About = () => {
             </motion.div>
           </div>
 
-          {/* Team Conclusion */}
+         
           <motion.p
             className="text-gray-600 text-base sm:text-lg mt-12 text-left  mx-auto"
             initial={{ opacity: 0, y: 20 }}
@@ -858,7 +1114,7 @@ export const About = () => {
             the highest standards of performance and reliability.
           </motion.p>
         </div>
-      </section>
+      </section> */}
       {/* CTA Section */}
       <CTAsec />
       {/* Footer */}

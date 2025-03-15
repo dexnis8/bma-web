@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
+import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 import { CTAsec } from "../components/CTAsec";
@@ -8,6 +8,53 @@ import { FAQ } from "../components/FAQ";
 import { ScrollToTop } from "../components/ScrollToTop";
 
 export const RequestDeal = () => {
+  // Animation controls
+  const heroControls = useAnimation();
+
+  // State to track if navbar should be sticky
+  const [isNavbarSticky, setIsNavbarSticky] = useState(false);
+  // Reference to hero section for intersection observer
+  const heroSectionRef = useRef(null);
+
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    // Start hero animations immediately
+    heroControls.start({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
+    });
+  }, [heroControls]);
+
+  // Set up intersection observer to detect when hero section is out of viewport
+  useEffect(() => {
+    const options = {
+      root: null, // viewport
+      rootMargin: "0px",
+      threshold: 0.1, // trigger when 10% of the hero is visible
+    };
+
+    const handleIntersection = (entries) => {
+      // When hero section is not intersecting (out of view), make navbar sticky
+      const [entry] = entries;
+      setIsNavbarSticky(!entry.isIntersecting);
+    };
+
+    const observer = new IntersectionObserver(handleIntersection, options);
+
+    if (heroSectionRef.current) {
+      observer.observe(heroSectionRef.current);
+    }
+
+    return () => {
+      if (heroSectionRef.current) {
+        observer.unobserve(heroSectionRef.current);
+      }
+    };
+  }, []);
+
   // List of countries with their codes
   const countries = [
     { code: "+1", name: "US", flag: "🇺🇸" },
@@ -84,21 +131,56 @@ export const RequestDeal = () => {
   return (
     <>
       <ScrollToTop />
+
+      {/* Sticky Navbar - Only visible when scrolled past hero section */}
+      <AnimatePresence>
+        {isNavbarSticky && (
+          <motion.div
+            className="fixed top-0 left-0 right-0 z-50 md:mx-20"
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="px-4 sm:px-6 md:px-10">
+              <Navbar isSticky={true} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Hero Section */}
-      <section className="bg-[#1E296B] pb-16 md:pb-24 px-4 sm:px-6 md:px-10">
+      <section
+        ref={heroSectionRef}
+        className="bg-[#1E296B] pb-16 md:pb-24 px-4 sm:px-6 md:px-10 relative overflow-hidden"
+      >
+        {/* Background Image */}
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src="/gridlines.png"
+            alt="BMA PureFix Dealership"
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/bg-blue.png"; // Fallback image
+            }}
+          />
+          {/* Overlay gradient to ensure text readability */}
+          {/* <div className="absolute inset-0 bg-[#1E296B]/65"></div> */}
+        </div>
+
         <motion.div
-          className="overflow-hidden rounded-lg"
+          className="overflow-hidden rounded-lg relative z-10"
           initial={{ opacity: 0, y: -30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={heroControls}
           transition={{ duration: 0.8, delay: 0.5 }}
-          viewport={{ once: true }}
         >
-          <div className="px-3 sm:px-5 md:px-[90px] py-4 md:py-[31px]">
-            <Navbar />
+          <div className="container mx-auto max-w-[1440px] px-3 sm:px-5 md:px-[90px] py-4 md:py-[31px]">
+            <Navbar isSticky={false} />
           </div>
         </motion.div>
 
-        <div className="container mx-auto max-w-7xl mt-16 md:mt-10">
+        <div className="container mx-auto max-w-[1440px] mt-16 md:mt-10 relative z-10">
           <div className="flex flex-col items-center justify-center text-center">
             <motion.h1
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl hero font-bold text-white mb-8"
@@ -127,7 +209,7 @@ export const RequestDeal = () => {
 
       {/* Contact Form Section */}
       <section className="py-16 md:py-24 px-4 sm:px-6 md:px-10 bg-white">
-        <div className="container mx-auto max-w-6xl">
+        <div className="container mx-auto max-w-[1440px]">
           <motion.div
             className="bg-white shadow-xl rounded-lg p-6 md:p-10 border border-gray-100"
             initial={{ opacity: 0, y: 30 }}
