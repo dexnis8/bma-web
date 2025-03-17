@@ -1013,7 +1013,7 @@ export const Home = () => {
               <div className="p-6">
                 <div className="h-64 flex items-center justify-center bg-[#EDEDED] rounded-lg mb-6">
                   <motion.img
-                    src="/pop.png"
+                    src="/p2.png"
                     alt="POP Cement Bag"
                     className="max-h-full max-w-full w-full object-contain"
                     initial={{ opacity: 0, scale: 0.9 }}
