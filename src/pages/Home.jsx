@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Navbar } from "../components/Navbar";
 // eslint-disable-next-line no-unused-vars
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
@@ -6,6 +7,8 @@ import { CTAsec } from "../components/CTAsec";
 import { FAQ } from "../components/FAQ";
 import { useEffect, useRef, useState } from "react";
 import { ScrollToTop } from "../components/ScrollToTop";
+import { WhatsAppFloat } from "../components/WhatsAppFloat";
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
   // Animation controls
@@ -21,6 +24,9 @@ export const Home = () => {
 
   // Reference to product section for smooth scrolling
   const productSectionRef = useRef(null);
+
+  //Navigateion
+  const navigate = useNavigate();
 
   // Scroll to top on page load and handle video playback
   useEffect(() => {
@@ -138,6 +144,7 @@ export const Home = () => {
   return (
     <>
       <ScrollToTop />
+      <WhatsAppFloat />
 
       {/* Sticky Navbar - Only visible when scrolled past hero section */}
       <AnimatePresence>
@@ -186,13 +193,13 @@ export const Home = () => {
             />
           )}
           {/* Overlay gradient to ensure text readability */}
-          <div className="absolute inset-0 bg-black/70 bg-opacity-60"></div>
+          <div className="absolute inset-0 bg-black/70 bg-opacity-60 z-10"></div>
         </div>
 
         {/* Mute/Unmute Indicator */}
         {showMuteIndicator && !videoError && (
           <motion.div
-            className="absolute z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-sm p-6 rounded-full"
+            className="absolute z-30 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-sm p-6 rounded-full"
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.5, opacity: 0 }}
@@ -242,7 +249,7 @@ export const Home = () => {
         {/* Small Mute Indicator (always visible) */}
         {!videoError && (
           <motion.div
-            className="absolute z-20 bottom-5 right-5 bg-black/30 backdrop-blur-sm p-2 rounded-full hover:bg-black/50 transition-colors"
+            className="absolute z-30 bottom-5 right-5 bg-black/30 backdrop-blur-sm p-2 rounded-full hover:bg-black/50 transition-colors"
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.7 }}
             whileHover={{ opacity: 1 }}
@@ -291,7 +298,7 @@ export const Home = () => {
 
         {/* Navbar in Hero Section */}
         <motion.div
-          className="absolute top-0 left-0 right-0 z-10 px-4 sm:px-6 md:px-10"
+          className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-6 md:px-10"
           initial={{ opacity: 0, y: -30 }}
           animate={heroControls}
           transition={{ duration: 0.8, delay: 0.5 }}
@@ -302,7 +309,7 @@ export const Home = () => {
         </motion.div>
 
         {/* Hero Content */}
-        <div className="container mx-auto px-4 z-10 text-center mt-16">
+        <div className="container mx-auto px-4 z-20 relative text-center mt-16">
           <motion.h1
             className="text-white md:w-[85%] mx-auto px-2 sm:px-[9px] text-center text-3xl md:text-5xl lg:text-7xl hero font-bold mb-8"
             initial={{ opacity: 0, y: -20 }}
@@ -324,6 +331,7 @@ export const Home = () => {
               whileHover={{ scale: 1.05, backgroundColor: "#0D47A1" }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              onClick={() => navigate("/contact")}
             >
               <img
                 src="/delivery.svg"
@@ -343,6 +351,7 @@ export const Home = () => {
               whileHover={{ scale: 1.05, backgroundColor: "#0D47A1" }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              onClick={() => navigate("/contact")}
             >
               <img
                 src="/call-love.svg"
@@ -360,7 +369,7 @@ export const Home = () => {
 
           {/* Scroll Indicator */}
           <motion.div
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer"
+            className="absolute mt-5 left-1/2 transform -translate-x-1/2 cursor-pointer"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1.2 }}
@@ -375,7 +384,7 @@ export const Home = () => {
               }
             }}
           >
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-end md:items-center">
               <motion.div
                 className="relative w-8 h-14 rounded-full border border-white mb-2 flex items-start justify-center"
                 variants={{
@@ -472,6 +481,7 @@ export const Home = () => {
                   className="bg-[#1E296B] text-white px-5 sm:px-6 py-2 sm:py-3 rounded-full font-medium hover:bg-[#151E4B] transition-colors"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/about")}
                 >
                   Read more
                 </motion.button>
@@ -711,6 +721,7 @@ export const Home = () => {
               className="bg-[#0E1853] text-white px-6 py-3 rounded-full font-medium hover:bg-[#1E296B] transition-colors"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => navigate("/contact")}
             >
               Connect with us
             </motion.button>
@@ -835,6 +846,7 @@ export const Home = () => {
                   className="bg-[#0E1853] text-white px-6 py-3 rounded-full font-medium hover:bg-[#1E296B] transition-colors"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/contact")}
                 >
                   Talk to us
                 </motion.button>
@@ -934,6 +946,7 @@ export const Home = () => {
                   className="bg-white text-[#001756] px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/about")}
                 >
                   Read more
                 </motion.button>
@@ -1024,6 +1037,7 @@ export const Home = () => {
                   className="bg-[#001756] text-white px-5 py-2 rounded-full font-medium hover:bg-[#1E296B] transition-colors inline-block"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/products")}
                 >
                   See details
                 </motion.button>
@@ -1066,6 +1080,7 @@ export const Home = () => {
                   className="bg-[#001756] text-white px-5 py-2 rounded-full font-medium hover:bg-[#1E296B] transition-colors inline-block"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/products")}
                 >
                   See details
                 </motion.button>
@@ -1104,6 +1119,7 @@ export const Home = () => {
                   className="bg-[#001756] text-white px-5 py-2 rounded-full font-medium hover:bg-[#1E296B] transition-colors inline-block"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/products")}
                 >
                   See details
                 </motion.button>
@@ -1144,6 +1160,7 @@ export const Home = () => {
                   className="bg-[#001756] text-white px-5 py-2 rounded-full font-medium hover:bg-[#1E296B] transition-colors inline-block"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/products")}
                 >
                   See details
                 </motion.button>
@@ -1208,11 +1225,11 @@ export const Home = () => {
                 />
                 <div>
                   <h3 className="font-bold text-gray-900">Eucharia Adams</h3>
-                  <p className="text-gray-600 text-sm">Customer</p>
+                  <p className="text-gray-600 text-sm">Building Contractor</p>
                 </div>
               </div>
 
-              <div className="flex mb-4">
+              {/* <div className="flex mb-4">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <svg
                     key={star}
@@ -1224,12 +1241,13 @@ export const Home = () => {
                   </svg>
                 ))}
                 <span className="ml-2 text-gray-700 font-medium">5.0</span>
-              </div>
+              </div> */}
 
               <p className="text-gray-600 mb-4">
-                "Lorem Ipsum is simply dummy text of the printing and
-                typesetting industry. Lorem Ipsum has been the industry's
-                standard dummy."
+                "BMA PureFix has transformed how our team completes projects.
+                The consistency and workability of this POP cement is
+                outstanding. Our ceiling designs now have a flawless finish that
+                our clients consistently praise."
               </p>
 
               <div className="absolute top-6 right-6 text-4xl text-gray-300 font-serif">
@@ -1259,8 +1277,8 @@ export const Home = () => {
             >
               <div className="flex items-center mb-4">
                 <img
-                  src="/user2.png"
-                  alt="Dele Johnson"
+                  src="/indian.jpg"
+                  alt="Anurag Pandey"
                   className="w-12 h-12 rounded-full object-cover mr-3"
                   onError={(e) => {
                     e.target.onerror = null;
@@ -1269,12 +1287,12 @@ export const Home = () => {
                   }}
                 />
                 <div>
-                  <h3 className="font-bold text-gray-900">Dele Johnson</h3>
-                  <p className="text-gray-600 text-sm">Customer</p>
+                  <h3 className="font-bold text-gray-900">Anurag Pandey</h3>
+                  <p className="text-gray-600 text-sm">Interior Designer</p>
                 </div>
               </div>
 
-              <div className="flex mb-4">
+              {/* <div className="flex mb-4">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <svg
                     key={star}
@@ -1286,12 +1304,13 @@ export const Home = () => {
                   </svg>
                 ))}
                 <span className="ml-2 text-gray-700 font-medium">5.0</span>
-              </div>
+              </div> */}
 
               <p className="text-gray-600 mb-4">
-                "Lorem Ipsum is simply dummy text of the printing and
-                typesetting industry. Lorem Ipsum has been the industry's
-                standard dummy."
+                "The durability of BMA PureFix is remarkable. I've used many
+                brands over the years, but this one sets a new standard. It
+                dries quickly yet gives plenty of working time for detailed
+                designs. My clients are always impressed with the results."
               </p>
 
               <div className="absolute top-6 right-6 text-4xl text-gray-300 font-serif">
@@ -1332,11 +1351,11 @@ export const Home = () => {
                 />
                 <div>
                   <h3 className="font-bold text-gray-900">John Bamidele</h3>
-                  <p className="text-gray-600 text-sm">Customer</p>
+                  <p className="text-gray-600 text-sm">Real Estate Developer</p>
                 </div>
               </div>
 
-              <div className="flex mb-4">
+              {/* <div className="flex mb-4">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <svg
                     key={star}
@@ -1348,12 +1367,14 @@ export const Home = () => {
                   </svg>
                 ))}
                 <span className="ml-2 text-gray-700 font-medium">5.0</span>
-              </div>
+              </div> */}
 
               <p className="text-gray-600 mb-4">
-                "Lorem Ipsum is simply dummy text of the printing and
-                typesetting industry. Lorem Ipsum has been the industry's
-                standard dummy."
+                "We've standardized BMA PureFix across all our development
+                projects. The consistency between batches is exceptional, and it
+                significantly reduces our project timelines while maintaining
+                the highest quality. It's cost-effective and delivers superior
+                results."
               </p>
 
               <div className="absolute top-6 right-6 text-4xl text-gray-300 font-serif">

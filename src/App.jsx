@@ -5,9 +5,12 @@ import { About } from "./pages/About";
 import { Products } from "./pages/Products";
 import { Contact } from "./pages/Contact";
 import { RequestDeal } from "./pages/RequestDeal";
+import { Toaster } from "react-hot-toast";
+
 function App() {
   return (
     <>
+      <Toaster position="top-center" />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />

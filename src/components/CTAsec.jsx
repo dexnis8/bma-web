@@ -10,7 +10,7 @@ export const CTAsec = () => {
 
         <div className="container mx-auto max-w-[1440px] relative z-10">
           <motion.div
-            className="flex flex-col items-center text-center text-white"
+            className="flex flex-col items-center text-center px-3 md:px-0 text-white"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
@@ -49,6 +49,7 @@ export const CTAsec = () => {
                 className="flex items-center cursor-pointer gap-2 bg-[#192875]/30 hover:bg-[#192875]/50 transition-colors duration-300 rounded-full px-6 py-3"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/contact")}
               >
                 <motion.img
                   src="/delivery.svg"
@@ -64,6 +65,7 @@ export const CTAsec = () => {
                 className="flex items-center cursor-pointer gap-2 bg-[#192875]/30 hover:bg-[#192875]/50 transition-colors duration-300 rounded-full px-6 py-3"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/contact")}
               >
                 <motion.img
                   src="/call-love.svg"

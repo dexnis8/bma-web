@@ -5,10 +5,15 @@ import { Footer } from "../components/Footer";
 import { CTAsec } from "../components/CTAsec";
 import { useEffect, useRef, useState } from "react";
 import { ScrollToTop } from "../components/ScrollToTop";
+import { WhatsAppFloat } from "../components/WhatsAppFloat";
+import { useNavigate } from "react-router-dom";
 
 export const Products = () => {
   // Animation controls
   const heroControls = useAnimation();
+
+  //navigations
+  const navigate = useNavigate();
 
   // State to track if navbar should be sticky
   const [isNavbarSticky, setIsNavbarSticky] = useState(false);
@@ -58,6 +63,7 @@ export const Products = () => {
   return (
     <>
       <ScrollToTop />
+      <WhatsAppFloat />
 
       {/* Sticky Navbar - Only visible when scrolled past hero section */}
       <AnimatePresence>
@@ -93,11 +99,11 @@ export const Products = () => {
             }}
           />
           {/* Overlay gradient to ensure text readability */}
-          {/* <div className="absolute inset-0 bg-[#1E296B]/60"></div> */}
+          <div className="absolute inset-0 bg-[#1E296B]/60 z-10"></div>
         </div>
 
         <motion.div
-          className="overflow-hidden rounded-lg relative z-10"
+          className="overflow-hidden rounded-lg relative z-20"
           initial={{ opacity: 0, y: -30 }}
           animate={heroControls}
           transition={{ duration: 0.8, delay: 0.5 }}
@@ -107,7 +113,7 @@ export const Products = () => {
           </div>
         </motion.div>
 
-        <div className="container mx-auto max-w-[1440px] mt-16 md:mt-10 relative z-10">
+        <div className="container mx-auto max-w-[1440px] mt-16 md:mt-10 relative z-20">
           <div className="flex flex-col items-center justify-center text-center">
             <motion.h1
               className=" hero font-bold text-white mb-8"
@@ -142,6 +148,7 @@ export const Products = () => {
                 whileHover={{ scale: 1.05, backgroundColor: "#0D47A1" }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                onClick={() => navigate("/contact")}
               >
                 <img
                   src="/delivery.svg"
@@ -161,6 +168,7 @@ export const Products = () => {
                 whileHover={{ scale: 1.05, backgroundColor: "#0D47A1" }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                onClick={() => navigate("/contact")}
               >
                 <img
                   src="/call-love.svg"
@@ -245,6 +253,7 @@ export const Products = () => {
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/contact")}
               >
                 <svg
                   className="w-5 h-5 mr-2"
@@ -754,6 +763,7 @@ export const Products = () => {
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/contact")}
               >
                 <svg
                   className="w-5 h-5 mr-2"
@@ -1235,6 +1245,7 @@ export const Products = () => {
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/contact")}
               >
                 <svg
                   className="w-5 h-5 mr-2"
@@ -1756,6 +1767,7 @@ export const Products = () => {
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/contact")}
               >
                 <svg
                   className="w-5 h-5 mr-2"
@@ -2248,6 +2260,7 @@ export const Products = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              onClick={() => navigate("/contact")}
             >
               Contact our Sales Team
             </motion.button>

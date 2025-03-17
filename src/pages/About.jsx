@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // eslint-disable-next-line no-unused-vars
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { Navbar } from "../components/Navbar";
@@ -5,6 +6,7 @@ import { Footer } from "../components/Footer";
 import { useEffect, useRef, useState } from "react";
 import { CTAsec } from "../components/CTAsec";
 import { ScrollToTop } from "../components/ScrollToTop";
+import { WhatsAppFloat } from "../components/WhatsAppFloat";
 
 export const About = () => {
   const heroControls = useAnimation();
@@ -102,6 +104,7 @@ export const About = () => {
   return (
     <>
       <ScrollToTop />
+      <WhatsAppFloat />
 
       {/* Sticky Navbar - Only visible when scrolled past hero section */}
       <AnimatePresence>
@@ -137,7 +140,7 @@ export const About = () => {
             }}
           />
           {/* Overlay gradient to ensure text readability */}
-          {/* <div className="absolute inset-0 bg-black/30"></div> */}
+          <div className="absolute inset-0 bg-black/30 z-10"></div>
         </div>
 
         {/* Audio Element */}
@@ -150,7 +153,7 @@ export const About = () => {
 
         {/* Navbar */}
         <motion.div
-          className="absolute top-0 left-0 right-0 z-10 px-4 sm:px-6 md:px-10"
+          className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-6 md:px-10"
           initial={{ opacity: 0, y: -30 }}
           animate={heroControls}
           transition={{ duration: 0.8, delay: 0.5 }}
@@ -163,7 +166,7 @@ export const About = () => {
         {/* Audio Controls */}
         {!audioError && (
           <motion.div
-            className="absolute top-5 right-5 z-20"
+            className="absolute top-5 right-5 z-30"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5 }}
@@ -215,7 +218,7 @@ export const About = () => {
         )}
 
         {/* Hero Content */}
-        <div className="container relative z-10 mx-auto max-w-[1440px] px-4 text-center">
+        <div className="container relative z-20 mx-auto max-w-[1440px] px-4 text-center">
           <motion.h1
             className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6"
             initial={{ opacity: 0, y: 30 }}

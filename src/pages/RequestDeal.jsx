@@ -6,6 +6,8 @@ import { CTAsec } from "../components/CTAsec";
 import { useState, useRef, useEffect } from "react";
 import { FAQ } from "../components/FAQ";
 import { ScrollToTop } from "../components/ScrollToTop";
+import { WhatsAppFloat } from "../components/WhatsAppFloat";
+import toast from "react-hot-toast";
 
 export const RequestDeal = () => {
   // Animation controls
@@ -50,6 +52,7 @@ export const RequestDeal = () => {
 
     return () => {
       if (heroSectionRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         observer.unobserve(heroSectionRef.current);
       }
     };
@@ -117,20 +120,54 @@ export const RequestDeal = () => {
     setIsCountryDropdownOpen(false);
   };
 
-  const handleSubmit = (e) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    const fullPhoneNumber = `${selectedCountry.code}${formData.phoneNumber}`;
-    console.log("Form submitted:", {
-      ...formData,
-      phoneNumber: fullPhoneNumber,
-    });
-    // Reset form or show success message
+    setIsSubmitting(true);
+    try {
+      const fullPhoneNumber = `${selectedCountry.code}${formData.phoneNumber}`;
+      const formDataToSubmit = new FormData();
+      formDataToSubmit.append("firstName", formData.firstName);
+      formDataToSubmit.append("phoneNumber", fullPhoneNumber);
+      formDataToSubmit.append("email", formData.email);
+      formDataToSubmit.append("subject", formData.subject);
+      formDataToSubmit.append("comment", formData.comment);
+      formDataToSubmit.append("type", "dealership_request");
+
+      const response = await fetch("https://bmapurefix.com/core/contact.php", {
+        method: "POST",
+        body: formDataToSubmit,
+      });
+
+      if (response.ok) {
+        // Reset form
+        setFormData({
+          firstName: "",
+          phoneNumber: "",
+          email: "",
+          subject: "",
+          comment: "",
+          agreedToPolicy: false,
+        });
+        toast.success("Dealership request submitted successfully!");
+        // Navigate to home page
+        window.location.href = "/";
+      } else {
+        throw new Error("Form submission failed");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("There was an error submitting the form. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <>
       <ScrollToTop />
+      <WhatsAppFloat />
 
       {/* Sticky Navbar - Only visible when scrolled past hero section */}
       <AnimatePresence>
@@ -166,11 +203,11 @@ export const RequestDeal = () => {
             }}
           />
           {/* Overlay gradient to ensure text readability */}
-          {/* <div className="absolute inset-0 bg-[#1E296B]/65"></div> */}
+          {/* <div className="absolute inset-0 bg-[#1E296B]/65 z-10"></div> */}
         </div>
 
         <motion.div
-          className="overflow-hidden rounded-lg relative z-10"
+          className="overflow-hidden rounded-lg relative z-20"
           initial={{ opacity: 0, y: -30 }}
           animate={heroControls}
           transition={{ duration: 0.8, delay: 0.5 }}
@@ -180,7 +217,7 @@ export const RequestDeal = () => {
           </div>
         </motion.div>
 
-        <div className="container mx-auto max-w-[1440px] mt-16 md:mt-10 relative z-10">
+        <div className="container mx-auto max-w-[1440px] mt-16 md:mt-10 relative z-20">
           <div className="flex flex-col items-center justify-center text-center">
             <motion.h1
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl hero font-bold text-white mb-8"
@@ -409,19 +446,46 @@ export const RequestDeal = () => {
               {/* Submit Button */}
               <motion.button
                 type="submit"
-                className="w-full py-4 px-4 bg-[#002366] text-white font-medium rounded-lg hover:bg-[#001a4d] transition-colors"
+                className="w-full py-4 px-4 bg-[#002366] text-white font-medium rounded-lg hover:bg-[#001a4d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
+                disabled={isSubmitting}
               >
-                Send message
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Sending...
+                  </div>
+                ) : (
+                  "Send message"
+                )}
               </motion.button>
             </form>
           </motion.div>
 
           {/* Contact Information */}
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
             <motion.div
-              className="flex items-center space-x-4 shadow-xl rounded-lg p-6 justify-center  border border-gray-100"
+              className="flex items-center space-x-4 shadow-xl rounded-lg p-6   border border-gray-100"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -439,9 +503,28 @@ export const RequestDeal = () => {
                 <p className="text-gray-600">Ibadan, Oyo State, Nigeria.</p>
               </div>
             </motion.div>
+            <motion.div
+              className="flex items-center space-x-4 shadow-xl rounded-lg p-6   border border-gray-100"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex-shrink-0 mt-1">
+                <div className=" p-3 rounded-full">
+                  <img src="/c1.svg" alt="" />
+                </div>
+              </div>
+              <div>
+                <p className="font-medium text-gray-800">
+                  Office 2411, SIT Tower Dubai Silicon Oasis,
+                </p>
+                <p className="text-gray-600">United Arab Emirates</p>
+              </div>
+            </motion.div>
 
             <motion.div
-              className="flex items-center space-x-4 shadow-xl rounded-lg p-6 justify-center  border border-gray-100"
+              className="flex items-center space-x-4 shadow-xl rounded-lg p-6  border border-gray-100"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -460,7 +543,7 @@ export const RequestDeal = () => {
             </motion.div>
 
             <motion.div
-              className="flex items-center space-x-4 shadow-xl rounded-lg p-6 justify-center  border border-gray-100"
+              className="flex items-center space-x-4 shadow-xl rounded-lg p-6  border border-gray-100"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}

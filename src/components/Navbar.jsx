@@ -13,9 +13,9 @@ export const Navbar = ({ isSticky = false }) => {
   };
 
   // Base classes for the navbar container
-  const navbarClasses = `flex justify-between items-center px-3 sm:px-5 py-3 relative ${
+  const navbarClasses = `flex justify-between items-center px-3 sm:px-5 py-3 relative z-50 ${
     isSticky
-      ? "bg-black/30 mt-5 rounded-full backdrop-blur-sm" // Solid background, no rounded corners when sticky
+      ? "bg-black/30 mt-5 rounded-full backdrop-blur-sm"
       : "bg-[#FFFFFF0D] rounded-full" // Transparent background with rounded corners in hero
   }`;
 
@@ -24,8 +24,8 @@ export const Navbar = ({ isSticky = false }) => {
       <div className={navbarClasses}>
         <div className="w-24 sm:w-32">
           <img
-            src={`${isSticky ? "/black-logo.png" : "/logo.png"}`}
-            // src="/logo.png"
+            // src={`${isSticky ? "/black-logo.png" : "/logo.png"}`}
+            src="/logo.png"
             alt="BMA logo"
             className="w-full h-full object-contain"
             onError={(e) => {
@@ -132,7 +132,7 @@ export const Navbar = ({ isSticky = false }) => {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className={`fixed inset-x-0 top-[76px] bg-[#1E296B] rounded-lg shadow-lg z-50 py-4 md:hidden mx-4`}
+            className={`fixed inset-x-0 top-[76px] bg-[#1E296B] rounded-lg shadow-lg z-[1000] py-4 md:hidden mx-4`}
             initial={{ opacity: 0, y: -20, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, y: -20, height: 0 }}
@@ -218,7 +218,9 @@ export const Navbar = ({ isSticky = false }) => {
                 transition={{ delay: 0.3, duration: 0.2 }}
               >
                 <button className="w-full px-6 py-[14px] rounded-full text-white font-semibold cursor-pointer hover:bg-[#FF0000]/80 transition-all duration-300 bg-[#FF0000] text-center">
-                  Request Dealership
+                  <Link to="/request-deal" onClick={() => setIsMenuOpen(false)}>
+                    Request Dealership
+                  </Link>{" "}
                 </button>
               </motion.li>
             </motion.ul>
