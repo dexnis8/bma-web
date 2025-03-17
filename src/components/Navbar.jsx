@@ -27,12 +27,13 @@ export const Navbar = ({ isSticky = false }) => {
             // src={`${isSticky ? "/black-logo.png" : "/logo.png"}`}
             src="/logo.png"
             alt="BMA logo"
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain cursor-pointer"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src =
                 "https://via.placeholder.com/800x450/1E296B/FFFFFF?text=BMA+PureFix+Team";
             }}
+            onClick={() => navigate("/")}
           />
         </div>
 
