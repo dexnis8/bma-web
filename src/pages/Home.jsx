@@ -311,7 +311,7 @@ export const Home = () => {
         {/* Hero Content */}
         <div className="container mx-auto px-4 z-20  text-center mt-16">
           <motion.h1
-            className="text-white md:w-[85%] mx-auto px-2 sm:px-[9px] text-center text-3xl md:text-5xl lg:text-7xl hero font-bold mb-8 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+            className="text-white md:w-[85%] mx-auto px-2 sm:px-[9px] text-center text-3xl md:text-5xl lg:text-7xl hero font-bold mb-8 drop-shadow-[2px_2px_0px_rgb(0,0,0)]"
             initial={{ opacity: 0, y: -20 }}
             animate={heroControls}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -1278,7 +1278,7 @@ export const Home = () => {
               <div className="flex items-center mb-4">
                 <img
                   src="/indian.jpg"
-                  alt="Anurag Pandey"
+                  alt="Harshdeep Singh"
                   className="w-12 h-12 rounded-full object-cover mr-3"
                   onError={(e) => {
                     e.target.onerror = null;
@@ -1287,8 +1287,8 @@ export const Home = () => {
                   }}
                 />
                 <div>
-                  <h3 className="font-bold text-gray-900">Anurag Pandey</h3>
-                  <p className="text-gray-600 text-sm">Interior Designer</p>
+                  <h3 className="font-bold text-gray-900">Harshdeep Singh</h3>
+                  <p className="text-gray-600 text-sm">Real Estate Developer</p>
                 </div>
               </div>
 
