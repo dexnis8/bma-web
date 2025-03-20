@@ -75,7 +75,7 @@ export const Products = () => {
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="px-4 sm:px-6 md:px-10">
+            <div className="px-4 sm:px-6 md:px-0">
               <Navbar isSticky={true} />
             </div>
           </motion.div>
@@ -188,7 +188,7 @@ export const Products = () => {
       </section>
 
       {/* Product Showcase Section 1 */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 md:px-10 bg-white">
+      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
         <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center mb-16">
             {/* Product Information */}
@@ -673,7 +673,7 @@ export const Products = () => {
       </section>
 
       {/* Product Showcase Section 2 - BMA Bond */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 md:px-10 bg-gray-50">
+      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-gray-50">
         <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center mb-16">
             {/* Product Image */}
@@ -1180,7 +1180,7 @@ export const Products = () => {
       </section>
 
       {/* Product Showcase Section 3 - BMA Screeding Paint */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 md:px-10 bg-white">
+      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
         <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center mb-16">
             {/* Product Information */}
@@ -1678,7 +1678,7 @@ export const Products = () => {
       </section>
 
       {/* Product Showcase Section 4 - BMA Bond */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 md:px-10 bg-gray-50">
+      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-gray-50">
         <div className="container mx-auto max-w-[1440px]">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center mb-16">
             {/* Product Image */}
@@ -2130,7 +2130,7 @@ export const Products = () => {
       </section>
 
       {/* Why Choose BMA PureFix Section */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 md:px-10 bg-black text-white">
+      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-black text-white">
         <div className="container mx-auto max-w-[1440px]">
           <motion.div
             className="text-center mb-12 md:mb-16"

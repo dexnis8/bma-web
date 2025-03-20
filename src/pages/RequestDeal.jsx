@@ -179,7 +179,7 @@ export const RequestDeal = () => {
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="px-4 sm:px-6 md:px-10">
+            <div className="px-4 sm:px-6 md:px-0">
               <Navbar isSticky={true} />
             </div>
           </motion.div>
@@ -245,7 +245,7 @@ export const RequestDeal = () => {
       </section>
 
       {/* Contact Form Section */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 md:px-10 bg-white">
+      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
         <div className="container mx-auto max-w-[1440px]">
           <motion.div
             className="bg-white shadow-xl rounded-lg p-6 md:p-10 border border-gray-100"

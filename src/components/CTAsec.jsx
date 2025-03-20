@@ -5,8 +5,8 @@ export const CTAsec = () => {
   const navigate = useNavigate();
   return (
     <>
-      <section className="relative py-20 px-6 md:px-0 overflow-hidden">
-        <div className="absolute w-[90%] h-[85%] my-auto mx-auto inset-0 bg-gradient-to-r from-[#0A1B56] to-[#541661] rounded-[40px]"></div>
+      <section className="relative py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 overflow-hidden">
+        <div className="absolute w-[87%] h-[85%] my-auto mx-auto inset-0 bg-gradient-to-r from-[#0A1B56] to-[#541661] rounded-[40px]"></div>
 
         <div className="container mx-auto max-w-[1440px] relative z-10">
           <motion.div

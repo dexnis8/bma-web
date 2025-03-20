@@ -116,7 +116,7 @@ export const About = () => {
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="px-4 sm:px-6 md:px-10">
+            <div className="px-4 sm:px-6 md:px-0">
               <Navbar isSticky={true} />
             </div>
           </motion.div>
