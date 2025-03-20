@@ -5,7 +5,7 @@ export const CTAsec = () => {
   const navigate = useNavigate();
   return (
     <>
-      <section className="relative py-20 px-6 md:px-10 overflow-hidden">
+      <section className="relative py-20 px-6 md:px-0 overflow-hidden">
         <div className="absolute w-[90%] h-[85%] my-auto mx-auto inset-0 bg-gradient-to-r from-[#0A1B56] to-[#541661] rounded-[40px]"></div>
 
         <div className="container mx-auto max-w-[1440px] relative z-10">

@@ -16,7 +16,7 @@ export const Navbar = ({ isSticky = false }) => {
   const navbarClasses = `flex justify-between items-center px-3 sm:px-5 py-3 relative z-50 ${
     isSticky
       ? "bg-black/30 mt-5 rounded-full backdrop-blur-sm"
-      : "bg-[#FFFFFF0D] rounded-full" // Transparent background with rounded corners in hero
+      : "bg-[#FFFFFF0D] rounded-full backdrop-blur-sm" // Transparent background with rounded corners in hero
   }`;
 
   return (

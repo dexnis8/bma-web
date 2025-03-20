@@ -193,7 +193,7 @@ export const Home = () => {
             />
           )}
           {/* Overlay gradient to ensure text readability */}
-          <div className="absolute inset-0 bg-black/70 bg-opacity-60 z-10"></div>
+          <div className="absolute inset-0 bg-black/20 z-10"></div>
         </div>
 
         {/* Mute/Unmute Indicator */}
@@ -309,9 +309,9 @@ export const Home = () => {
         </motion.div>
 
         {/* Hero Content */}
-        <div className="container mx-auto px-4 z-20 relative text-center mt-16">
+        <div className="container mx-auto px-4 z-20  text-center mt-16">
           <motion.h1
-            className="text-white md:w-[85%] mx-auto px-2 sm:px-[9px] text-center text-3xl md:text-5xl lg:text-7xl hero font-bold mb-8"
+            className="text-white md:w-[85%] mx-auto px-2 sm:px-[9px] text-center text-3xl md:text-5xl lg:text-7xl hero font-bold mb-8 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
             initial={{ opacity: 0, y: -20 }}
             animate={heroControls}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -369,7 +369,7 @@ export const Home = () => {
 
           {/* Scroll Indicator */}
           <motion.div
-            className="absolute mt-5 left-1/2 transform -translate-x-1/2 cursor-pointer"
+            className="absolute bottom-8 flex items-center justify-center left-1/2 transform -translate-x-1/2 cursor-pointer"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1.2 }}
@@ -862,7 +862,7 @@ export const Home = () => {
               whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
             >
               <img
-                src="/img.png"
+                src="/hn1.png"
                 alt="BMA PureFix Team"
                 className="w-full h-full object-cover"
                 onError={(e) => {

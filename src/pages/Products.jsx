@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { ScrollToTop } from "../components/ScrollToTop";
 import { WhatsAppFloat } from "../components/WhatsAppFloat";
 import { useNavigate } from "react-router-dom";
-
+import { FAQ } from "../components/FAQ";
 export const Products = () => {
   // Animation controls
   const heroControls = useAnimation();
@@ -206,9 +206,9 @@ export const Products = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                BMA Plaster of Paris
+                Gypsum Plaster of
                 <br />
-                (POP Cement)
+                Paris (Turkey)
               </motion.h2>
 
               <motion.p
@@ -717,7 +717,7 @@ export const Products = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                GYPSUM Plaster
+                Gypsum Plaster of <br /> Paris (Egypt)
               </motion.h2>
 
               <motion.p
@@ -1273,7 +1273,7 @@ export const Products = () => {
                 transition={{ duration: 0.3 }}
               >
                 <img
-                  src="/p3.png"
+                  src="/p4.png"
                   alt="BMA Screeding Paint Product"
                   className="w-full h-auto object-contain"
                   onError={(e) => {
@@ -1695,7 +1695,7 @@ export const Products = () => {
                 transition={{ duration: 0.3 }}
               >
                 <img
-                  src="/p4.png"
+                  src="/p3.png"
                   alt="BMA Bond - High-Performance Adhesive"
                   className="w-full h-auto object-contain"
                   onError={(e) => {
@@ -2267,7 +2267,8 @@ export const Products = () => {
           </motion.div>
         </div>
       </section>
-
+      {/* FAQ */}
+      <FAQ />
       {/* CTA Section */}
       <CTAsec />
 

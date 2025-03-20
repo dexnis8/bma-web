@@ -303,7 +303,7 @@ export const About = () => {
                 transition={{ duration: 0.3 }}
               >
                 <img
-                  src="/n1.png"
+                  src="/abn1.png"
                   alt="BMA PureFix Innovation"
                   className="w-full h-auto object-cover rounded-lg"
                   onError={(e) => {
@@ -336,7 +336,7 @@ export const About = () => {
                 transition={{ duration: 0.3 }}
               >
                 <img
-                  src="/n2.png"
+                  src="/abn2.png"
                   alt="BMA PureFix Team Members"
                   className="w-full h-auto object-cover rounded-lg"
                   onError={(e) => {
@@ -873,66 +873,50 @@ export const About = () => {
       </section>
 
       {/* Meet Our CEO Section */}
-      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-white">
+      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 lg:px-20 bg-[#1E296B]">
         <div className="container mx-auto max-w-[1440px]">
-          <motion.div
-            className="mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            viewport={{ once: true }}
-          >
-            <motion.h2
-              className="text-3xl sm:text-4xl font-bold text-[#1D1E25] leading-tight mb-2"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              Meet Our CEO:
-            </motion.h2>
-            <motion.p
-              className="text-gray-600 text-lg"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              Engineering Strength, Cementing Success, Building Futures
-            </motion.p>
-          </motion.div>
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+            {/* Left Column - Heading and CEO Image */}
+            <div className="w-full md:w-1/2 space-y-8">
+              <motion.h2
+                className="text-4xl sm:text-5xl font-bold text-white leading-tight"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
+                viewport={{ once: true }}
+              >
+                Meet Our CEO
+              </motion.h2>
 
-          <div className="flex flex-col md:flex-row gap-8 md:gap-16">
-            {/* CEO Image */}
-            <motion.div
-              className="w-full md:w-2/5"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <img
-                src="/ceo.png"
-                alt="Bello Michael - CEO of BMA PureFix"
-                className="w-full h-auto rounded-lg"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "https://via.placeholder.com/500x600/f5f5f5/333333?text=CEO+Portrait";
-                }}
-              />
-            </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+              >
+                <img
+                  src="/ceo.png"
+                  alt="Bello Michael - CEO of BMA PureFix"
+                  className="w-full h-auto rounded-lg"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src =
+                      "https://via.placeholder.com/500x600/f5f5f5/333333?text=CEO+Portrait";
+                  }}
+                />
+              </motion.div>
+            </div>
 
-            {/* CEO Info */}
+            {/* Right Column - CEO Info */}
             <motion.div
-              className="w-full md:w-3/5"
+              className="w-full md:w-1/2 text-white"
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
               <motion.h3
-                className="text-2xl font-bold text-[#1D1E25] mb-1"
+                className="text-3xl font-bold text-white mb-2"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
@@ -940,8 +924,9 @@ export const About = () => {
               >
                 Bello Michael
               </motion.h3>
+
               <motion.p
-                className="text-gray-600 mb-6"
+                className="text-white/80 text-xl mb-4"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
@@ -949,32 +934,43 @@ export const About = () => {
               >
                 MD, CEO
               </motion.p>
+
               <motion.p
-                className="text-gray-600 mb-6 leading-relaxed"
+                className="text-white/80 text-lg font-medium mb-6"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
                 viewport={{ once: true }}
               >
+                Engineering Strength, Cementing Success, Building Futures
+              </motion.p>
+
+              <motion.p
+                className="text-white/70 mb-6 leading-relaxed"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                viewport={{ once: true }}
+              >
                 With over 20 years of experience in the construction materials
-                industry, Bello Michael leads our company with a vision for
-                innovation and excellence. His strategic leadership has been
-                instrumental in establishing BMA PureFix as a market leader.
+                industry, John leads our company with a vision for innovation
+                and excellence. His strategic leadership has been instrumental
+                in establishing BMA PureFix as a market leader.
+              </motion.p>
+
+              <motion.p
+                className="text-white/70 leading-relaxed"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                viewport={{ once: true }}
+              >
+                Together, our team is committed to pushing the boundaries of
+                innovation and quality, ensuring that every product we deliver
+                meets the highest standards of performance and reliability.
               </motion.p>
             </motion.div>
           </div>
-
-          <motion.p
-            className="text-gray-600 mt-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6 }}
-            viewport={{ once: true }}
-          >
-            Together, our team is committed to pushing the boundaries of
-            innovation and quality, ensuring that every product we deliver meets
-            the highest standards of performance and reliability.
-          </motion.p>
         </div>
       </section>
 
