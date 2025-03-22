@@ -1028,7 +1028,7 @@ export const Home = () => {
                   />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-1">
-                  GYPSUM Plaster
+                  Gypsum Plaster of Paris (Egypt)
                 </h3>
                 <p className="text-gray-600 mb-4">
                   BMA PureFix (Plaster of Paris)
@@ -1071,7 +1071,7 @@ export const Home = () => {
                   />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-1">
-                  POP Cement
+                  Gypsum Plaster of Paris (Turkey)
                 </h3>
                 <p className="text-gray-600 mb-4">
                   BMA PureFix (Plaster of Paris)

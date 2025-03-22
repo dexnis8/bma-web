@@ -41,7 +41,7 @@ export const Footer = () => {
             </div>
 
             {/* Pages Links */}
-            <div className="md:col-span-1">
+            <div className="md:col-span-1 ">
               <h3 className="text-lg font-semibold mb-4">Pages</h3>
               <ul className="space-y-3">
                 <li>
@@ -80,7 +80,7 @@ export const Footer = () => {
             </div>
 
             {/* Products Links */}
-            <div className="md:col-span-1">
+            <div className="md:col-span-1 md:-ml-20 ">
               <h3 className="text-lg font-semibold mb-4">Products</h3>
               <ul className="space-y-3">
                 <li>
@@ -88,7 +88,7 @@ export const Footer = () => {
                     href="/products"
                     className="text-gray-300 hover:text-white transition-colors"
                   >
-                    GYPSUM Plaster
+                    Gypsum Plaster of Paris (Egypt)
                   </a>
                 </li>
                 <li>
@@ -96,7 +96,7 @@ export const Footer = () => {
                     href="/products"
                     className="text-gray-300 hover:text-white transition-colors"
                   >
-                    Pop Cement
+                    Gypsum Plaster of Paris (Turkey)
                   </a>
                 </li>
                 <li>
